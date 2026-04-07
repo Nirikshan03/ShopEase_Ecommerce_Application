@@ -1,0 +1,28 @@
+# Maven build output
+target/
+*.class
+*.jar
+*.war
+
+# IDE files
+.idea/
+*.iml
+.eclipse/
+.classpath
+.project
+.settings/
+.factorypath
+.vscode/
+
+# Environment secrets — NEVER commit these
+.env
+*.env
+application-prod.properties
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

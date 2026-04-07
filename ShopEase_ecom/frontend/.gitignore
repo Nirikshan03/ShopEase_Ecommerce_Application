@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Environment — NEVER commit .env with real values
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
