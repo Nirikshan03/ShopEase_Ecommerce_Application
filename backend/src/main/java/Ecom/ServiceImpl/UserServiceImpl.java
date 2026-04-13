@@ -73,8 +73,8 @@ public class UserServiceImpl implements UserService {
 
         User newAdmin = new User();
         newAdmin.setEmail(admin.getEmail());
-        // FIX: encode password for admin registration too
-        newAdmin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        // Password is already encoded in AdminController before calling this method
+        newAdmin.setPassword(admin.getPassword());
         newAdmin.setFirstName(admin.getFirstName());
         newAdmin.setLastName(admin.getLastName());
         newAdmin.setPhoneNumber(admin.getPhoneNumber());
