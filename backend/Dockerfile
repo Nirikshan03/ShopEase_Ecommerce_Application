@@ -7,7 +7,8 @@ WORKDIR /app
 COPY . .
 
 # Fix Windows line endings in mvnw, then build
-RUN apt-get install -y dos2unix -q && \
+RUN apt-get update && \
+    apt-get install -y dos2unix -q && \
     dos2unix mvnw && \
     chmod +x mvnw && \
     ./mvnw clean package -DskipTests -q
