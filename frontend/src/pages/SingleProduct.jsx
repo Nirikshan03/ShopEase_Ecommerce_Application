@@ -16,7 +16,7 @@ const SingleProduct = () => {
       .then(res => { setProduct(res.data); document.title = `ShopEase | ${res.data.name}`; })
       .catch(() => navigate('/products'))
       .finally(() => setLoading(false));
-  }, [productId]);
+  }, [productId, navigate]);
 
   const addToCart = () => {
     const userId = localStorage.getItem('userid');
