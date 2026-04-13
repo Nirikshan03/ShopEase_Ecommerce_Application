@@ -6,12 +6,8 @@ WORKDIR /app
 # Copy everything
 COPY . .
 
-# Fix Windows line endings in mvnw, then build
-RUN apt-get update && \
-    apt-get install -y dos2unix -q && \
-    dos2unix mvnw && \
-    chmod +x mvnw && \
-    ./mvnw clean package -DskipTests -q
+# Use the native 'mvn' bundled with the Docker base image instead of mvnw to prevent any wrapper/line-ending issues
+RUN MAVEN_OPTS="" MAVEN_ARGS="" mvn clean package -DskipTests -q
 
 # ─── Stage 2: Run ─────────────────────────────────────────────
 FROM eclipse-temurin:17-jre-alpine
