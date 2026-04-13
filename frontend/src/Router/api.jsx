@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const rawUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8080',
+  baseURL: rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl,
 });
 
 api.interceptors.request.use(

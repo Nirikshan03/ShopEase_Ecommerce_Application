@@ -35,7 +35,8 @@ public class AppConfig {
                     // Falls back to allowing all origins for local dev
                     String allowedOrigin = System.getenv("ALLOWED_ORIGIN");
                     if (allowedOrigin != null && !allowedOrigin.isBlank()) {
-                        cfg.setAllowedOrigins(List.of(allowedOrigin));
+                        // FIX: Must use OriginPatterns to avoid crash when allowCredentials is true
+                        cfg.setAllowedOriginPatterns(List.of(allowedOrigin));
                     } else {
                         cfg.setAllowedOriginPatterns(List.of("*"));
                     }
