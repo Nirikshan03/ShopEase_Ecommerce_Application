@@ -1,0 +1,86 @@
+version: '3.8'
+
+# ─── ShopEase Local Development Environment ──────────────────────────────────
+# Usage:
+#   docker-compose up --build        → start all services
+#   docker-compose up mysql          → start only the database
+#   docker-compose down -v           → stop & remove volumes
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── MySQL Database ──────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: shopease-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: shopease_root
+      MYSQL_DATABASE: ecomdb
+      MYSQL_USER: shopease
+      MYSQL_PASSWORD: shopease_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - shopease-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pshopease_root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Spring Boot Backend ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shopease-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ecomdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: shopease_root
+      JWT_SECRET: local-dev-secret-key-change-in-production
+      ALLOWED_ORIGIN: http://localhost:3000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - shopease-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── React Frontend ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shopease-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      REACT_APP_API_URL: http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - shopease-network
+
+# ─── Named Volumes ────────────────────────────────────────────────────────────
+volumes:
+  mysql_data:
+    driver: local
+
+# ─── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  shopease-network:
+    driver: bridge
