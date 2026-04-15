@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: shopease-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shopease-backend
+  template:
+    metadata:
+      labels:
+        app: shopease-backend
+    spec:
+      containers:
+        - name: backend
+          image: shopease-backend:latest
+          imagePullPolicy: Never # Use local image for Minikube dev
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: shopease-config
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: shopease-secrets
+                  key: MYSQL_ROOT_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: shopease-secrets
+                  key: JWT_SECRET
+            - name: ALLOWED_ORIGIN
+              value: "*"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: shopease-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

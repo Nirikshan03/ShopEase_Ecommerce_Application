@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: shopease-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shopease-frontend
+  template:
+    metadata:
+      labels:
+        app: shopease-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: shopease-frontend:latest
+          imagePullPolicy: Never # Use local image for Minikube dev
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: shopease-config
+                  key: REACT_APP_API_URL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: shopease-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
