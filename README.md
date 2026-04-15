@@ -1,49 +1,127 @@
-# ShopEase (Simple Setup)
+# ShopEase Ecommerce Application
 
-Clean full-stack ecommerce project with:
-- `backend`: Spring Boot + MySQL
-- `frontend`: React
+ShopEase is a full-stack ecommerce application built with a robust Spring Boot backend and a responsive React frontend. It supports seamless product browsing, secure authentication-ready backend APIs, MySQL data persistence, and easy Docker-based local setups.
 
-## 1) Quick Start (Without Docker)
+## 🚀 Live Demo
 
-### Backend
-1. Start MySQL locally (or with Docker).
-2. From `backend`:
-   - `./mvnw spring-boot:run` (Linux/macOS)
-   - `mvnw.cmd spring-boot:run` (Windows)
-3. Backend runs on `http://localhost:8080`.
+- **Frontend Application**: [https://sweet-longma-6569ad.netlify.app/](https://sweet-longma-6569ad.netlify.app/)
+- **Backend API Server**: Deployed and hosted on **Render**.
+- **Database**: Managed **MySQL** instance hosted on **Aiven**.
 
-### Frontend
-1. From `frontend`:
-   - `npm install`
-   - `npm start`
-2. Frontend runs on `http://localhost:3000`.
+## 🛠 Tech Stack
 
-## 2) Quick Start (With Docker Compose)
+- **Backend**: `Java 17`, `Spring Boot`, `Spring Data JPA`, `Spring Security`, `MySQL`
+- **Frontend**: `React 18`, `React Router`, `Axios`, `CSS3`
+- **DevOps**: `Docker`, `Docker-Compose`, `GitHub Actions` (CI/CD)
+- **Deployment & Cloud Providers**: `Render` (Backend App), `Netlify` (Frontend Application), `Aiven` (MySQL Database)
 
-From repo root:
+## 📂 Project Structure
+
+- `backend/` - Spring Boot RESTful API containing all services, security configurations, controllers, and models.
+- `frontend/` - React client application designed with reusable UI components and dynamic routing.
+- `.github/workflows/ci.yml` - CI pipeline setup for backend/frontend checks ensuring test reliabilities.
+- `docker-compose.yml` - Local multi-service staging environment mapping (MySQL + Backend + Frontend).
+
+## 💻 Prerequisites
+
+- **Java 17+**
+- **Node.js 18+** and **npm**
+- **MySQL 8** (only needed if not using Docker locally)
+- **Docker Desktop** (optional, recommended for easiest setup via containerization)
+
+## 🏃 Run Locally (Without Docker)
+
+### 1) Start Backend
+
+From `backend/`:
+
+- Windows:
+  - `mvnw.cmd spring-boot:run`
+- Linux/macOS:
+  - `./mvnw spring-boot:run`
+
+Backend default URL operates at: `http://localhost:8080`
+
+### 2) Start Frontend
+
+From `frontend/`:
+
+- `npm install`
+- `npm start`
+
+Frontend default development port operates at: `http://localhost:3000`
+
+## 🐳 Run with Docker-Compose (Recommended)
+
+From the project root simply orchestrate your containers:
+
 - `docker-compose up --build`
 
-This starts:
-- MySQL on `3306`
-- Backend on `8080`
-- Frontend on `3000`
+This starts parallel dependent services:
+- MySQL Database: `localhost:3306`
+- Backend Spring API: `http://localhost:8080`
+- Frontend React Client: `http://localhost:3000`
 
-## 3) Test Commands
+Stop all services gracefully:
+- `docker-compose down`
 
-### Backend tests
-- `cd backend`
-- `./mvnw test` (Linux/macOS) or `mvnw.cmd test` (Windows)
+Stop and remove associated persist volumes:
+- `docker-compose down -v`
 
-### Frontend tests (single run)
-- `cd frontend`
-- `set CI=true && npx react-scripts test --watchAll=false --passWithNoTests` (PowerShell: `$env:CI='true'; npx react-scripts test --watchAll=false --passWithNoTests`)
+## ⚙️ Environment Configuration
 
-## 4) What Was Removed
+The backend application dynamically reads values from environment variables relying on safe local defaults during development mode. Configure these keys directly within your hosting platforms for production.
 
-To keep this repo simple and beginner-friendly:
-- Removed Jenkins pipeline (`Jenkinsfile`)
-- Removed Kubernetes manifests (`k8s/`)
-- Kept only a lightweight GitHub Actions CI workflow
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+- `JWT_SECRET`
+- `ALLOWED_ORIGIN`
+- `PORT` (Required mapping for cloud deployments like Render)
 
-If you need production-grade DevOps later, Jenkins/Kubernetes can be added back in a separate branch.
+See `backend/src/main/resources/application.properties` for complete configurations.
+
+## 🧪 Build and Test
+
+### Backend Services
+
+From `backend/`:
+
+- Run Tests:
+  - Windows: `mvnw.cmd test`
+  - Linux/macOS: `./mvnw test`
+- Build executable jar:
+  - Windows: `mvnw.cmd clean package`
+  - Linux/macOS: `./mvnw clean package`
+
+### Frontend Application
+
+From `frontend/`:
+
+- Install all resolved dependencies: `npm ci`
+- Run local unit tests continuously or test directly for CI pipelines mode:
+  - PowerShell: `$env:CI='true'; npx react-scripts test --watchAll=false --passWithNoTests`
+  - CMD: `set CI=true && npx react-scripts test --watchAll=false --passWithNoTests`
+- Create a bundled production build: `npm run build`
+
+## 🔄 CI Pipeline
+
+Integrated GitHub Actions workflow at `.github/workflows/ci.yml` strictly guards the main branch against untested PRs:
+
+- **Backend Job**: Automatically instances a MySQL service wrapper, triggers standard schema creation, and executes all unit tests via Maven.
+- **Frontend Job**: Verifies lockfile integrity via `npm ci`, builds frontend, and executes all testing components actively.
+
+## 🚀 Deployment Environment Strategy
+
+- **Backend config**: Containerized and exposed via `backend/render.yaml` directives mappings on Render Web Services.
+- **Frontend config**: Hosted implicitly via serverless static hosting instructions generated in `frontend/netlify.toml` mapped to Netlify servers.
+- **Database integrity**: Configured securely via Aiven's managed cloud environments without openly documented strings.
+
+## 📊 Health and Monitoring Metrics
+
+The backend API safely monitors the health statistics leveraging the custom actuator frameworks via HTTP:
+
+- `/actuator/health`
+- `/actuator/info`
+- `/actuator/metrics`
+- `/actuator/prometheus`
