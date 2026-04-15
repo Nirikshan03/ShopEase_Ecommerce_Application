@@ -72,10 +72,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             products = productRepository.findAll(sort);
         }
-        if (products.isEmpty()) {
-            throw new ProductException("Product List Empty");
-        }
-
+        // Return empty list instead of throwing — the frontend handles the empty state gracefully
         return products;
 
     }
