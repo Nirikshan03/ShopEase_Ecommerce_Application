@@ -47,8 +47,8 @@ public class CartServiceImpl implements CartService {
 				System.out.println("cart item imside loop...");
 				for (int i = 0; i < cartItems.size(); i++) {
 					System.out.println("inside loop");
-					if (cartItems.get(i).getProduct().getProductId() == productId&&
-							cartItems.get(i).getCart().getCartId()==userCart.getCartId()) {
+					if (cartItems.get(i).getProduct().getProductId().equals(productId) &&
+    					cartItems.get(i).getCart().getCartId().equals(userCart.getCartId())) {
 						throw new CartException("Product Already in the Cart,Please Increase the Quantity");
 					}
 				}
@@ -175,7 +175,7 @@ public class CartServiceImpl implements CartService {
 		List<Product> products = new ArrayList<>();
 
 		for (CartItem cartItem : cartItems) {
-			if (cartItem.getCart().getCartId() == cartId) {
+			if (cartItem.getCart().getCartId().equals(cartId)) {
 				Product product = cartItem.getProduct();
 				products.add(product);
 			}

@@ -47,8 +47,9 @@ public class Orders {
 
     private double totalAmount;
 
-    @OneToMany( cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<OrderItem> orderItem= new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private List<OrderItem> orderItem = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name="Payment_id")
